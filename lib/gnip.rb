@@ -1,4 +1,4 @@
-require "pry"
+require "gnip"
 require "active_support/core_ext/hash"
 require "httparty"
 require "gnip/version"
@@ -9,6 +9,12 @@ require "gnip/gnip-stream/error_reconnect"
 require "gnip/gnip-stream/json_data_bufffer"
 require "gnip/gnip-stream/stream"
 require "gnip/gnip-stream/replay"
+
+begin
+  require "pry"
+rescue LoadError => e
+  
+end
 
 module Gnip
   
