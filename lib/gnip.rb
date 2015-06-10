@@ -1,4 +1,3 @@
-require "gnip"
 require "active_support/core_ext/hash"
 require "httparty"
 require "gnip/version"
