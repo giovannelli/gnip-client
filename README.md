@@ -1,15 +1,18 @@
-# Gnip
+# Gnip Client
+Gnip client is a Ruby library for accessing the Gnip API, with this gem you can manage rules, full archive search, and streaming realtime contents. 
+You can also call the replay method if the realtimestream goes down for any reason.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/gnip`. To experiment with that code, run `bin/console` for an interactive prompt.
+In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/gnip`. 
+To experiment with that code, run `bundle console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'gnip'
+gem 'gnip-client'
 ```
 
 And then execute:
@@ -18,21 +21,28 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install gnip
+    $ gem install gnip-client
 
 ## Usage
+You can define the client passing username, password, account and label (defaul is dev).
 
-client = Gnip::PowerTrackClient.new(username: YOUR_USERNAME, password: YOUR_PASSWORD, account: YOUR_ACCOUNT, label: "prod")
 
+```ruby
 label possible values: prod, dev
+client = Gnip::PowerTrackClient.new(username: YOUR_USERNAME, password: YOUR_PASSWORD, account: YOUR_ACCOUNT, label: "prod")
+```
+
+
+```ruby
 
 client.rules.add(rules)
 client.rules.remove(rules)
 client.rules.list
 client.rules.delete_all
 
-client.full_archive.counts(query: "ciao", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
-client.full_archive.counts(query: "ciao", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+client.full_archive.search(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+client.full_archive.total_by_time_period(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+client.full_archive.counts(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
 
 client.stream.consume(date_from: Time.now - 2.day, date_to: Time.now - 1.day) do |data|
   puts data
@@ -42,7 +52,7 @@ client.replay.consume(date_from: Time.now - 2.day, date_to: Time.now - 1.day) do
   puts data
 end
 
-client.full_archive.counts(query: "ciao", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+```
 
 ## Development
 
@@ -52,7 +62,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/gnip/fork )
+1. Fork it ( https://github.com/giovannelli/gnip-client/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
