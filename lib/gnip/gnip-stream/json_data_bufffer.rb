@@ -21,8 +21,12 @@ module Gnip
           entries << activities.shift
           @buffer = activities.join(split_pattern)
         end
-
-        entries
+        #Fix to manage buffer where json are not multiline
+        real_entries = []
+        entries.each do |entry| 
+          real_entries += entry.gsub("}{", "}}{{").split("}{")
+        end
+        real_entries
       end
     end
   end

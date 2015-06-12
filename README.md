@@ -12,7 +12,7 @@ To experiment with that code, run `bundle console` for an interactive prompt.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'gnip-client'
+gem 'gnip-client', require: 'gnip'
 ```
 
 And then execute:
