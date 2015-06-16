@@ -26,29 +26,38 @@ Or install it yourself as:
 ## Usage
 You can define the client passing username, password, account and label (defaul is dev).
 
-
 ```ruby
 label possible values: prod, dev
 client = Gnip::PowerTrackClient.new(username: YOUR_USERNAME, password: YOUR_PASSWORD, account: YOUR_ACCOUNT, label: "prod")
 ```
 
+** Manage gnip rules **
 
 ```ruby
+rules = {"rules": [{"value": "rule1", "tag": "tag1"}, {"value":"rule2"}] }
 
 client.rules.add(rules)
 client.rules.remove(rules)
 client.rules.list
 client.rules.delete_all
+```
+** Full Archive search **
 
+```ruby
 client.full_archive.search(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
 client.full_archive.total_by_time_period(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
 client.full_archive.total(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+```
 
-client.stream.consume(date_from: Time.now - 2.day, date_to: Time.now - 1.day) do |data|
+** Stream **
+Derived from [follow]: https://github.com/rweald/gnip-stream
+
+```ruby
+client.stream.consume(date_from: Time.now - 2.days, date_to: Time.now - 1.day) do |data|
   puts data
 end
 
-client.replay.consume(date_from: Time.now - 2.day, date_to: Time.now - 1.day) do |data|
+client.replay.consume(date_from: Time.now - 2.days, date_to: Time.now - 1.day) do |data|
   puts data
 end
 
