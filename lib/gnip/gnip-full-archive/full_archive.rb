@@ -71,12 +71,12 @@ module Gnip
           response = { results: [], next: nil, error: e.message }
         end
         return response if !parsed_response[:next].to_s.present?
-        counts(query: search_options[:query], date_from: search_options[:fromDate], date_to: search_options[:toDate], bucket: search_options[:bucket], next_cursor: parsed_response[:next], response: response)
+        total_by_time_period(query: search_options[:query], date_from: search_options[:fromDate], date_to: search_options[:toDate], bucket: search_options[:bucket], next_cursor: parsed_response[:next], response: response)
       end
   
       #return total contents in a specific date interval with a passed query 
       def total(options={})
-        response = counts(options)
+        response = total_by_time_period(options)
         return response.map{|item| item[:count]}.reduce(:+)
       end
     

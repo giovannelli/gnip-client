@@ -42,7 +42,7 @@ client.rules.delete_all
 
 client.full_archive.search(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
 client.full_archive.total_by_time_period(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
-client.full_archive.counts(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+client.full_archive.total(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
 
 client.stream.consume(date_from: Time.now - 2.day, date_to: Time.now - 1.day) do |data|
   puts data
