@@ -50,6 +50,7 @@ client.full_archive.total(query: "hello", date_from: Time.now - 2.months, date_t
 ```
 
 **Stream**
+
 Derived from [gnip-stream](https://github.com/rweald/gnip-stream)
 
 ```ruby
