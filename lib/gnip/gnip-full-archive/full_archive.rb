@@ -77,7 +77,7 @@ module Gnip
       #return total contents in a specific date interval with a passed query 
       def total(options={})
         response = total_by_time_period(options)
-        return response.map{|item| item[:count]}.reduce(:+)
+        return response[:results].map{|item| item[:count]}.reduce(:+)
       end
     
     end
