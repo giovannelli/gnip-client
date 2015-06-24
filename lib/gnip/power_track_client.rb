@@ -4,7 +4,7 @@ module Gnip
     attr_accessor :publisher, :label, :account,
                   :username, :password
       
-    attr_reader :rules, :full_archive, :stream, :replay
+    attr_reader :rules, :reply_rules, :full_archive, :stream, :replay
       
     def initialize(options = {})
       @account        = options[:account]
@@ -13,9 +13,10 @@ module Gnip
       @username       = options[:username]
       @password       = options[:password]
       @rules          = Gnip::GnipRules::Rules.new(self)
+      @replay_rules   = Gnip::GnipRules::Rules.new(self, true)
       @full_archive   = Gnip::GnipFullArchive::FullArchive.new(self)
       @stream         = Gnip::GnipStream::Stream.new(self)
-      @replay         = Gnip::GnipStream::Replay.new(self, true)
+      @replay         = Gnip::GnipStream::Replay.new(self)
     end
       
   end
