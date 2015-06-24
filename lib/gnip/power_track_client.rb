@@ -15,7 +15,7 @@ module Gnip
       @rules          = Gnip::GnipRules::Rules.new(self)
       @full_archive   = Gnip::GnipFullArchive::FullArchive.new(self)
       @stream         = Gnip::GnipStream::Stream.new(self)
-      @replay         = Gnip::GnipStream::Replay.new(self)
+      @replay         = Gnip::GnipStream::Replay.new(self, true)
     end
       
   end

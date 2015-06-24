@@ -6,8 +6,8 @@ module Gnip
       
       attr_reader :rules_url
       
-      def initialize(client)
-        @rules_url = "https://api.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/streams/track/#{client.label}/rules.json"
+      def initialize(client, replay=false)
+        @rules_url = "https://api.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/#{replay ? "replay" : "streams"}/track/#{client.label}/rules.json"
         @auth = { username: client.username, password: client.password }
       end
       
