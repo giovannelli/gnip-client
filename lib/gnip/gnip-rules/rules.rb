@@ -30,7 +30,7 @@ module Gnip
       
       #delete all rules from PowerTrack
       def delete_all!
-        rules = self.list.rules
+        rules = self.list
         sleep 5
         self.remove(rules)
       end
