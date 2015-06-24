@@ -4,7 +4,7 @@ module Gnip
     attr_accessor :publisher, :label, :account,
                   :username, :password
       
-    attr_reader :rules, :reply_rules, :full_archive, :stream, :replay
+    attr_reader :rules, :replay_rules, :full_archive, :stream, :replay
       
     def initialize(options = {})
       @account        = options[:account]
