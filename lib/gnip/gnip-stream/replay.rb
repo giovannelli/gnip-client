@@ -6,6 +6,11 @@ module Gnip
         super
         @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
       end
+      
+      def configure_handlers
+        self.on_error { |error| @error_handler.attempt_to_reconnect("Gnip Connection Error. Reason was: #{error.inspect}") }
+        self.on_connection_close { puts 'done' }
+      end
           
       def consume(options={}, &block)
         @client_callback = block if block
