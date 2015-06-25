@@ -25,7 +25,7 @@ module Gnip
       
       #Get the full list of rules
       def list
-        self.class.get(self.rules_url, basic_auth: @auth).parsed_response["rules"]
+        self.class.get(self.rules_url, basic_auth: @auth).parsed_response.slice("rules")
       end
       
       #delete all rules from PowerTrack
