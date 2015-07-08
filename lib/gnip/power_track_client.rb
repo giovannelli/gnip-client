@@ -13,7 +13,7 @@ module Gnip
       @label           = options[:label]||"dev"
       @username        = options[:username]
       @password        = options[:password]
-      @backfill_client = options[:backfill_client]        
+      @backfill_client = options[:backfill_client]||nil        
       @rules           = Gnip::GnipRules::Rules.new(self)
       @replay_rules    = Gnip::GnipRules::Rules.new(self, true)
       @full_archive    = Gnip::GnipFullArchive::FullArchive.new(self)
