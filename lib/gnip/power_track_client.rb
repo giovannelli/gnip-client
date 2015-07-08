@@ -2,7 +2,7 @@ module Gnip
   class PowerTrackClient
       
     attr_accessor :publisher, :label, :account,
-                  :username, :password
+                  :username, :password,
                   :backfill_client
       
     attr_reader :rules, :replay_rules, :full_archive, :stream, :replay

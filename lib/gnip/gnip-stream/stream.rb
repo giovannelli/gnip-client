@@ -9,7 +9,7 @@ module Gnip
 
       attr_accessor :url, :backfill_client
 
-      def initialize(client)      
+      def initialize(client)   
         @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/streams/track/#{client.label}.json"
         @backfill_client = client.backfill_client
         @processor  = JsonDataBuffer.new("\r\n", Regexp.new(/^\{.*\}\r\n/))
@@ -45,7 +45,7 @@ module Gnip
       def connect
         EM.run do
           options = {}
-          options = { "query" => { "client" => self.backfill_client } } if self.backfill_client.present?
+          options = { query: { "client" => self.backfill_client } } if self.backfill_client.present?
           http = EM::HttpRequest.new(self.url, inactivity_timeout: 45, connection_timeout: 75).get( { head: @headers }.merge!(options))
           http.stream { |chunk| process_chunk(chunk) }
           http.callback { 
