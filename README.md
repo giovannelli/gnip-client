@@ -39,7 +39,14 @@ rules = {"rules": [{"value": "rule1", "tag": "tag1"}, {"value":"rule2"}] }
 client.rules.add(rules)
 client.rules.remove(rules)
 client.rules.list
-client.rules.delete_all
+client.rules.delete_all!
+
+#For the replay channel
+client.replay_rules.add(rules)
+client.replay_rules.remove(rules)
+client.replay_rules.list
+client.replay_rules.delete_all!
+
 ```
 **Full Archive search**
 

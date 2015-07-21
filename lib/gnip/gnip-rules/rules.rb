@@ -29,12 +29,22 @@ module Gnip
       end
       
       #delete all rules from PowerTrack
+      #http://support.gnip.com/apis/powertrack/api_reference.html#DeleteRules
+      #Request Body Size Limit 1 MB (~5000 rules)
       def delete_all!
-        rules = self.list
-        sleep 5
-        self.remove(rules)
+        rules_list = self.list
+        rules_list["rules"].in_groups_of(2, false).each do |group_of_rules|
+          self.remove({ "rules": group_of_rules })
+        end
+        sleep 0.05
+        rules_list = self.list
+        if !rules_list["rules"].size.zero?
+          self.delete_all!
+        else
+          return []
+        end
       end
-    
     end
+    
   end
 end
