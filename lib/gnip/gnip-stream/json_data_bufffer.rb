@@ -17,10 +17,11 @@ module Gnip
       def complete_entries
         entries = []
         while @buffer =~ check_pattern
+          new_line = @buffer[@buffer.size - 2..@buffer.size - 1] == "\r\n"
           activities = @buffer.split(split_pattern)
           entries << activities.shift
           @buffer = activities.join(split_pattern)
-          @buffer = @buffer + "\r\n" if @buffer.size > 0
+          @buffer = @buffer + "\r\n" if @buffer.size > 0 && new_line
         end
         entries.select{ |entry| entry.size > 0 }
       end
