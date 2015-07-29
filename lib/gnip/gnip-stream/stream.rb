@@ -7,10 +7,11 @@ module Gnip
     
       EventMachine.threadpool_size = 5
 
-      attr_accessor :url
+      attr_accessor :url, :backfill_client
 
-      def initialize(client)      
+      def initialize(client)   
         @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/streams/track/#{client.label}.json"
+        @backfill_client = client.backfill_client
         @processor  = JsonDataBuffer.new("\r\n", Regexp.new(/^\{.*\}\r\n/))
         @headers    = {'authorization' => [client.username, client.password], 'accept-encoding' => 'gzip, compressed'}
         @error_handler = ErrorReconnect.new(self, :consume)
@@ -43,7 +44,9 @@ module Gnip
 
       def connect
         EM.run do
-          http = EM::HttpRequest.new(self.url, inactivity_timeout: 45, connection_timeout: 75).get(head: @headers)
+          options = {}
+          options = { query: { "client" => self.backfill_client } } if self.backfill_client.present?
+          http = EM::HttpRequest.new(self.url, inactivity_timeout: 45, connection_timeout: 75).get( { head: @headers }.merge!(options))
           http.stream { |chunk| process_chunk(chunk) }
           http.callback { 
             handle_connection_close(http) 

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'gnip'
 
 describe Gnip do
   

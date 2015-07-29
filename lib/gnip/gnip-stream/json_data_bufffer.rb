@@ -17,17 +17,15 @@ module Gnip
       def complete_entries
         entries = []
         while @buffer =~ check_pattern
+          new_line = @buffer[@buffer.size - 2..@buffer.size - 1] == "\r\n"
           activities = @buffer.split(split_pattern)
           entries << activities.shift
           @buffer = activities.join(split_pattern)
+          @buffer = @buffer + "\r\n" if @buffer.size > 0 && new_line
         end
-        #Fix to manage buffer where json are not multiline
-        real_entries = []
-        entries.each do |entry| 
-          real_entries += entry.gsub("}{", "}}{{").split("}{")
-        end
-        real_entries
+        entries.select{ |entry| entry.size > 0 }
       end
     end
+    
   end
 end
