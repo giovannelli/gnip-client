@@ -32,10 +32,10 @@ module Gnip
       def remove(rules)
         begin
           response = self.class.delete(self.rules_url, basic_auth: @auth, body: rules.to_json)
-          if response.parsed_response["error"].present?
+          if response.parsed_response.present? && response.parsed_response["error"].present?
             { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
           else
-            { status: :success, code: response.response.code }
+            { status: :success, code: 200 }
           end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
@@ -72,12 +72,12 @@ module Gnip
         retry_times = 0
         begin
           rules_list = self.list
-          rules_list["rules"].in_groups_of(2, false).each do |group_of_rules|
+          rules_list[:rules].in_groups_of(2, false).each do |group_of_rules|
             self.remove({ "rules": group_of_rules })
           end
           sleep 0.05
           rules_list = self.list
-          if !rules_list["rules"].size.zero?
+          if !rules_list[:rules].size.zero?
             self.delete_all!
           else
             return { status: :success, code: 200, rules: []}
