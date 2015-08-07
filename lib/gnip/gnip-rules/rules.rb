@@ -16,10 +16,10 @@ module Gnip
       def add(rules)
         begin
           response = self.class.post(self.rules_url, basic_auth: @auth, body: rules.to_json)
-          if response.parsed_response["error"].present?
+          if response.parsed_response.present? && response.parsed_response["error"].present?
             { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
           else
-            { status: :success, code: response.response.code }
+            { status: :success, code: 200 }
           end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
