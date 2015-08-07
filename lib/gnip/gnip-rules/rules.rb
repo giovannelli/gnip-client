@@ -47,7 +47,7 @@ module Gnip
       def list
         begin
           response = self.class.get(self.rules_url, basic_auth: @auth)
-          response.parsed_response.slice("rules").merge({ status: :success, code: response.response.code })
+          { rules: response.parsed_response["rules"], status: :success, code: response.response.code }
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
         end
@@ -58,8 +58,7 @@ module Gnip
         begin
           response = self.class.get(self.rules_url, basic_auth: @auth)
           rules = response.parsed_response["rules"]
-          by_tag_rules = rules.select{|rule| rule["tag"] == tag}
-          return { rules: by_tag_rules }.merge({ status: :success, code: response.response.code })
+          return { rules: rules.select{|rule| rule["tag"] == tag} }.merge({ status: :success, code: response.response.code })
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
         end
