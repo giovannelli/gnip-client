@@ -47,7 +47,11 @@ module Gnip
       def list
         begin
           response = self.class.get(self.rules_url, basic_auth: @auth)
-          { rules: response.parsed_response["rules"], status: :success, code: response.response.code }
+          if response.parsed_response.present? && response.parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          else
+            { status: :success, code: 200, rules: response.parsed_response["rules"] }
+          end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
         end
@@ -56,9 +60,13 @@ module Gnip
       #Get the full list of rules by tag
       def list_by_tag(tag)
         begin
-          response = self.class.get(self.rules_url, basic_auth: @auth)
-          rules = response.parsed_response["rules"]
-          return { rules: rules.select{|rule| rule["tag"] == tag} }.merge({ status: :success, code: response.response.code })
+          response = self.class.get(self.rules_url, basic_auth: @auth)      
+          if response.parsed_response.present? && response.parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          else
+            rules = response.parsed_response["rules"]
+            { status: :success, code: 200, rules: rules.select{ |rule| rule["tag"] == tag } }
+          end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
         end
