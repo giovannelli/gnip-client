@@ -31,11 +31,14 @@ module Gnip
         search_options[:next]         = options[:next_cursor] if options[:next_cursor]  
         url = [self.search_url, search_options.to_query].join('?')
         begin
-          parsed_response = self.class.get(url, basic_auth: @auth).parsed_response
-          if parsed_response["error"].present?
-            response = { results: [], next: nil, error: parsed_response["error"]["message"] }
+          gnip_call = self.class.get(url, basic_auth: @auth)
+          parsed_response = gnip_call.parsed_response
+          parsed_response = (parsed_response||{}).with_indifferent_access
+          raise gnip_call.response.message if !parsed_response.present?
+          if parsed_response[:error].present?
+            response = { results: [], next: nil, error: parsed_response[:error][:message] }
           else
-            response = { results: parsed_response["results"], next: parsed_response["next"] }
+            response = { results: parsed_response[:results], next: parsed_response[:next] }
           end
         rescue Exception => e
           response = { results: [], next: nil, error: e.message }
@@ -57,8 +60,10 @@ module Gnip
         url = [self.counts_url, search_options.to_query].join('?')
       
         begin
-          parsed_response = self.class.get(url, basic_auth: @auth).parsed_response
-          parsed_response = parsed_response.with_indifferent_access
+          gnip_call = self.class.get(url, basic_auth: @auth)
+          parsed_response = gnip_call.parsed_response
+          parsed_response = (parsed_response||{}).with_indifferent_access
+          raise gnip_call.response.message if !parsed_response.present?
           if parsed_response[:error].present?
             response = { results: [], next: nil, error: parsed_response[:error][:message] }
           else
