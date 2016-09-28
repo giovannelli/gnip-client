@@ -7,10 +7,18 @@ module Gnip
     
       EventMachine.threadpool_size = 5
 
-      attr_accessor :url, :backfill_client
+      attr_accessor :url, :backfill_client, :version
 
-      def initialize(client)   
-        @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/streams/track/#{client.label}.json"
+      def initialize(client)
+        self.version = client.power_track_version
+        case self.version
+        when '1.0'
+          @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/streams/track/#{client.label}.json"
+        when '2.0'
+          @url = "https://gnip-stream.twitter.com/stream/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
+        else
+          raise Exception.new("version #{self.version} is not supported from this gem.")
+        end
         @backfill_client = client.backfill_client
         @processor  = JsonDataBuffer.new("\r\n", Regexp.new(/^\{.*\}\r\n/))
         @headers    = {'authorization' => [client.username, client.password], 'accept-encoding' => 'gzip, compressed'}

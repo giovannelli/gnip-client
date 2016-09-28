@@ -4,10 +4,18 @@ module Gnip
       
       include HTTParty
       
-      attr_reader :rules_url
+      attr_reader :rules_url, :version
       
       def initialize(client, replay=false)
-        @rules_url = "https://api.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/#{replay ? "replay" : "streams"}/track/#{client.label}/rules.json"
+        @version = client.power_track_version
+        case self.version
+        when '1.0'
+          @rules_url = "https://api.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/#{replay ? "replay" : "streams"}/track/#{client.label}/rules.json"
+        when '2.0'
+          @rules_url = "https://gnip-api.twitter.com/rules/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
+        else
+          raise Exception.new("version #{self.version} is not supported from this gem.")
+        end
         @auth = { username: client.username, password: client.password }
       end
       
@@ -15,11 +23,12 @@ module Gnip
       #rules should be an hash in the format {"rules": [{"value": "rule1", "tag": "tag1"}, {"value":"rule2"}]}"
       def add(rules)
         begin
-          response = self.class.post(self.rules_url, basic_auth: @auth, body: rules.to_json)
-          if response.parsed_response.present? && response.parsed_response["error"].present?
-            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          response = self.class.post( self.rules_url, basic_auth: @auth, body: rules.to_json, headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }, type: :json )
+          parsed_response = safe_parsed_response(response.parsed_response)
+          if parsed_response.present? && parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: parsed_response["error"]["message"] }
           else
-            { status: :success, code: 200 }
+            { status: :success, code: 200, response: parsed_response }
           end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
@@ -31,11 +40,12 @@ module Gnip
       #rules should be an hash in the format {"rules": [{"value": "rule1", "tag": "tag1"}, {"value":"rule2"}]}"
       def remove(rules)
         begin
-          response = self.class.delete(self.rules_url, basic_auth: @auth, body: rules.to_json)
-          if response.parsed_response.present? && response.parsed_response["error"].present?
-            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          response = self.class.post(self.rules_url, query: { _method: 'delete'}, basic_auth: @auth, body: rules.to_json)
+          parsed_response = safe_parsed_response(response.parsed_response)
+          if parsed_response.present? && parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: parsed_response["error"]["message"] }
           else
-            { status: :success, code: 200 }
+            { status: :success, code: 200, response: parsed_response }
           end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
@@ -46,11 +56,12 @@ module Gnip
       #Get the full list of rules
       def list
         begin
-          response = self.class.get(self.rules_url, basic_auth: @auth)
-          if response.parsed_response.present? && response.parsed_response["error"].present?
-            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          response = self.class.get(self.rules_url, basic_auth: @auth, headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }, type: :json )
+          parsed_response = safe_parsed_response(response.parsed_response)
+          if parsed_response.present? && parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: parsed_response["error"]["message"] }
           else
-            { status: :success, code: 200, rules: response.parsed_response["rules"] }
+            { status: :success, code: 200, rules: parsed_response["rules"] }
           end
         rescue Exception => e
           { status: :error, code: 500, error: e.message }
@@ -60,11 +71,12 @@ module Gnip
       #Get the full list of rules by tag
       def list_by_tag(tag)
         begin
-          response = self.class.get(self.rules_url, basic_auth: @auth)      
-          if response.parsed_response.present? && response.parsed_response["error"].present?
-            { status: :error, code: response.response.code, error: response.parsed_response["error"]["message"] }
+          response = self.class.get(self.rules_url, basic_auth: @auth)
+          parsed_response = safe_parsed_response(response.parsed_response)
+          if parsed_response.present? && parsed_response["error"].present?
+            { status: :error, code: response.response.code, error: parsed_response["error"]["message"] }
           else
-            rules = response.parsed_response["rules"]
+            rules = parsed_response["rules"]
             { status: :success, code: 200, rules: rules.select{ |rule| rule["tag"] == tag } }
           end
         rescue Exception => e
@@ -99,6 +111,12 @@ module Gnip
           end 
         end
 
+      end
+      
+      private
+      def safe_parsed_response(parsed_response)
+        ret = parsed_response.present? ? (parsed_response.is_a?(String) ? JSON.parse(parsed_response).with_indifferent_access : parsed_response) : nil
+        ret
       end
       
     end
