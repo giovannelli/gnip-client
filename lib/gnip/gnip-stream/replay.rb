@@ -4,7 +4,14 @@ module Gnip
 
       def initialize(client)
         super
-        @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
+        case self.version
+        when '1.0'
+          @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
+        when '2.0'
+          @url = "https://gnip-stream.twitter.com/replay/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
+        else
+          raise Exception.new("version #{self.version} is not supported from this gem.")
+        end
       end
       
       def configure_handlers
