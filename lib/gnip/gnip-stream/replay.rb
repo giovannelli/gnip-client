@@ -3,7 +3,7 @@ module Gnip
     class Replay < Stream
 
       def initialize(client)
-        super
+        super #version is setted in the super
         case self.version
         when '1.0'
           @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
