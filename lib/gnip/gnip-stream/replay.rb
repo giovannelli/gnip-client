@@ -8,7 +8,7 @@ module Gnip
         when '1.0'
           @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
         when '2.0'
-          @url = "https://gnip-stream.twitter.com/replay/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
+          @url = "https://gnip-stream.gnip.com/replay/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
         else
           raise Exception.new("version #{self.version} is not supported from this gem.")
         end
@@ -16,7 +16,7 @@ module Gnip
       
       def configure_handlers
         self.on_error { |error| @error_handler.attempt_to_reconnect("Gnip Connection Error. Reason was: #{error.inspect}") }
-        self.on_connection_close { puts 'done' }
+        self.on_connection_close { puts 'Gnip::GnipStream::Replay -> Connection closed' }
       end
           
       def consume(options={}, &block)
