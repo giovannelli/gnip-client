@@ -6,9 +6,9 @@ module Gnip
         super #version is setted in the super
         case self.version
         when '1.0'
-          @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.label}.json"
+          @url = "https://stream.gnip.com:443/accounts/#{client.account}/publishers/#{client.publisher}/replay/track/#{client.replay_label}.json"
         when '2.0'
-          @url = "https://gnip-stream.gnip.com/replay/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.label}.json"
+          @url = "https://gnip-stream.gnip.com/replay/powertrack/accounts/#{client.account}/publishers/#{client.publisher}/#{client.replay_label}.json"
         else
           raise Exception.new("version #{self.version} is not supported from this gem.")
         end

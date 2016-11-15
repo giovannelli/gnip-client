@@ -3,7 +3,7 @@ module Gnip
       
     attr_accessor :publisher, :label, :account,
                   :username, :password,
-                  :backfill_client
+                  :backfill_client, :replay_label
       
     attr_reader :rules, :replay_rules, :full_archive, :stream, :replay, :power_track_version
       
@@ -11,6 +11,7 @@ module Gnip
       @account             = options[:account]
       @publisher           = options[:publisher]||"twitter"
       @label               = options[:label]||"dev"
+      @replay_label        = options[:replay_label]||@label
       @username            = options[:username]
       @password            = options[:password]
       @backfill_client     = options[:backfill_client]||nil
