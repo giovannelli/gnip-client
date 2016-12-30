@@ -32,16 +32,17 @@ module Gnip
         url = [self.search_url, search_options.to_query].join('?')
         begin
           gnip_call = self.class.get(url, basic_auth: @auth)
+          response = gnip_call.response
           parsed_response = gnip_call.parsed_response
           parsed_response = (parsed_response||{}).with_indifferent_access
-          raise gnip_call.response.message if !parsed_response.present?
+          raise response.message if !parsed_response.present?
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message] }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code }
           else
-            response = { results: parsed_response[:results], next: parsed_response[:next] }
+            response = { results: parsed_response[:results], next: parsed_response[:next], code: response.code }
           end
         rescue Exception => e
-          response = { results: [], next: nil, error: e.message }
+          response = { results: [], next: nil, error: e.message, code: 500 }
         end
         return response
       end
@@ -61,19 +62,20 @@ module Gnip
       
         begin
           gnip_call = self.class.get(url, basic_auth: @auth)
+          response = gnip_call.response
           parsed_response = gnip_call.parsed_response
           parsed_response = (parsed_response||{}).with_indifferent_access
-          raise gnip_call.response.message if !parsed_response.present?
+          raise response.message if !parsed_response.present?
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message] }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code }
           else
             parsed_response[:results].each_with_index do |item, i| 
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
             end
-            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next] }
+            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next], code: response.code }
           end
         rescue Exception => e
-          response = { results: [], next: nil, error: e.message }
+          response = { results: [], next: nil, error: e.message, code: 500 }
         end
         return response if !parsed_response[:next].to_s.present?
         total_by_time_period(query: search_options[:query], date_from: search_options[:fromDate], date_to: search_options[:toDate], bucket: search_options[:bucket], next_cursor: parsed_response[:next], response: response)
