@@ -37,9 +37,9 @@ module Gnip
           parsed_response = (parsed_response||{}).with_indifferent_access
           raise response.message if !parsed_response.present?
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code.to_i }
           else
-            response = { results: parsed_response[:results], next: parsed_response[:next], code: response.code }
+            response = { results: parsed_response[:results], next: parsed_response[:next], code: response.code.to_i }
           end
         rescue Exception => e
           response = { results: [], next: nil, error: e.message, code: 500 }
@@ -67,12 +67,12 @@ module Gnip
           parsed_response = (parsed_response||{}).with_indifferent_access
           raise response.message if !parsed_response.present?
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code.to_i }
           else
             parsed_response[:results].each_with_index do |item, i| 
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
             end
-            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next], code: response.code }
+            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next], code: response.code.to_i }
           end
         rescue Exception => e
           response = { results: [], next: nil, error: e.message, code: 500 }
