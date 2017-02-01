@@ -16,15 +16,15 @@ module Gnip
         @auth = { username: client.username, password: client.password }
       end
           
-      #Search using the fullarchive search endpoint return an hash containing up to 500 results and the cursor to the next page
-      #options[:query] query to twitter
-      #options[:per_page] default is 500
-      #options[:start_date] as datetime
-      #options[:end_date]  as datetime
-      #options[:cursor_next] cursor to the next page
+      # Search using the full-archive search endpoint return an hash containing up to 500 results and the cursor to the next page
+      # options[:query] query to twitter
+      # options[:per_page] default is 500
+      # options[:start_date] as datetime
+      # options[:end_date]  as datetime
+      # options[:cursor_next] cursor to the next page
       def search(options = {})
         search_options = {}
-        search_options[:query] = options[:query]||""
+        search_options[:query] = options[:query]||''
         search_options[:maxResults]  = options[:per_page]||500
         search_options[:fromDate]    = Gnip.format_date(options[:date_from]) if options[:date_from]
         search_options[:toDate]      = Gnip.format_date(options[:date_to]) if options[:date_to]
@@ -53,18 +53,21 @@ module Gnip
       def total_by_time_period(options={})
         response = options[:response]||{}
         search_options = {}
-        search_options[:query]    = options[:query]||""
+        search_options[:query]    = options[:query]||''
         search_options[:bucket]   = options[:bucket]||'day'
         search_options[:fromDate] = Gnip.format_date(options[:date_from]) if options[:date_from]
         search_options[:toDate]   = Gnip.format_date(options[:date_to]) if options[:date_to]
-        search_options[:next]     = options[:next_cursor] if options[:next_cursor]  
+        search_options[:next]     = options[:next_cursor] if options[:next_cursor]
+
         url = [self.counts_url, search_options.to_query].join('?')
       
         begin
           gnip_call = self.class.get(url, basic_auth: @auth)
           response = gnip_call.response
+
           parsed_response = gnip_call.parsed_response
           parsed_response = (parsed_response||{}).with_indifferent_access
+
           raise response.message if !parsed_response.present?
           if parsed_response[:error].present?
             response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code.to_i }
@@ -78,10 +81,16 @@ module Gnip
           response = { results: [], next: nil, error: e.message, code: 500 }
         end
         return response if !parsed_response[:next].to_s.present?
-        total_by_time_period(query: search_options[:query], date_from: search_options[:fromDate], date_to: search_options[:toDate], bucket: search_options[:bucket], next_cursor: parsed_response[:next], response: response)
+
+        total_by_time_period(query: search_options[:query],
+                             date_from: search_options[:fromDate],
+                             date_to: search_options[:toDate],
+                             bucket: search_options[:bucket],
+                             next_cursor: parsed_response[:next],
+                             response: response)
       end
   
-      #return total contents in a specific date interval with a passed query 
+      # return total contents in a specific date interval with a passed query
       def total(options={})
         extra = {}
         response = total_by_time_period(options)
