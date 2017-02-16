@@ -63,19 +63,19 @@ module Gnip
       
         begin
           gnip_call = self.class.get(url, basic_auth: @auth)
-          response = gnip_call.response
 
           parsed_response = gnip_call.parsed_response
           parsed_response = (parsed_response||{}).with_indifferent_access
 
-          raise response.message if !parsed_response.present?
+          raise gnip_call.response.message if !parsed_response.present?
+
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message], code: response.code.to_i }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: calls }
           else
             parsed_response[:results].each_with_index do |item, i| 
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
             end
-            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next], code: response.code.to_i }
+            response = { results: (response[:results]||[]) + parsed_response[:results], next: parsed_response[:next], code: gnip_call.response.code.to_i, calls: (response[:calls]||0) + 1 }
           end
         rescue Exception => e
           response = { results: [], next: nil, error: e.message, code: 500 }
