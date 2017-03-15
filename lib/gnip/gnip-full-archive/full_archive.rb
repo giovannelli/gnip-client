@@ -70,7 +70,7 @@ module Gnip
           raise gnip_call.response.message if !parsed_response.present?
 
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: calls }
+            response = { results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: (response[:calls]||0) + 1 }
           else
             parsed_response[:results].each_with_index do |item, i| 
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
