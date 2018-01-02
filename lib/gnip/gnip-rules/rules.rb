@@ -96,12 +96,12 @@ module Gnip
         retry_times = 0
         begin
           rules_list = self.list
-          rules_list[:rules].in_groups_of(2, false).each do |group_of_rules|
+          (rules_list[:rules]||[]).in_groups_of(2, false).each do |group_of_rules|
             self.remove({ "rules": group_of_rules })
           end
           sleep 0.05
           rules_list = self.list
-          if !rules_list[:rules].size.zero?
+          if !(rules_list[:rules]||[]).size.zero?
             self.delete_all!
           else
             return { status: :success, code: 200, rules: []}
