@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 module Gnip
   module GnipStream
-    class JsonDataBuffer 
-    
+    class JsonDataBuffer
       attr_accessor :split_pattern, :check_pattern
-    
+
       def initialize(split_pattern, check_pattern)
         @split_pattern = split_pattern
         @check_pattern = check_pattern
-        @buffer = ""
+        @buffer = ''
       end
 
       def process(chunk)
@@ -21,11 +22,10 @@ module Gnip
           activities = @buffer.split(split_pattern)
           entries << activities.shift
           @buffer = activities.join(split_pattern)
-          @buffer = @buffer + "\r\n" if @buffer.size > 0 && new_line
+          @buffer += "\r\n" if !@buffer.empty? && new_line
         end
-        entries.select{ |entry| entry.size > 0 }
+        entries.reject(&:empty?)
       end
     end
-    
   end
 end

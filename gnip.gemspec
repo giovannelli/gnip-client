@@ -1,5 +1,6 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'gnip/version'
 
@@ -9,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Duccio Giovannelli']
   spec.email         = ['giovannelli@extendi.it']
 
-  spec.summary       = %q{A Ruby library for accessing the Gnip API. See https://gnip.com/ for full details and to sign up for an account.}
+  spec.summary       = 'A Ruby library for accessing the Gnip API. See https://gnip.com/ for full details and to sign up for an account.'
   spec.homepage      = 'https://github.com/giovannelli/gnip-client'
   spec.license       = 'MIT'
 
@@ -19,11 +20,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 1.9'
-  spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'pry', '~> 0'
+  spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3'
-  
-  spec.add_dependency 'httparty', '~> 0'
-  spec.add_dependency 'em-http-request', '~> 1'
+
   spec.add_dependency 'activesupport', '>= 4.2'
+  spec.add_dependency 'em-http-request', '~> 1'
+  spec.add_dependency 'httparty', '~> 0'
 end
