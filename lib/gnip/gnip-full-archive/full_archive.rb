@@ -91,7 +91,7 @@ module Gnip
             response = { results: (response[:results] || []) + parsed_response[:results], next: parsed_response[:next], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1 }
           end
         rescue StandardError => e
-          response = { results: [], next: nil, error: e.message, code: 500 }
+          response = { results: [], next: nil, error: e.message, code: 500, calls: (response[:calls] || 0)  }
         end
         # If the next cursor is not present we fetched all the data
         # It happens that twitter returns the same cursor, in that case we stop
