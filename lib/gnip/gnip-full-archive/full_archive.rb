@@ -110,7 +110,7 @@ module Gnip
         extra = {}
         response = total_by_time_period(options)
         extra = { error: response[:error] } if response[:error].present?
-        { query: options[:query], total: response[:results].map { |item| item[:count] }.reduce(:+) }.merge!(extra)
+        { query: options[:query], total: response[:results].map { |item| item[:count] }.reduce(:+), calls: response[:calls] }.merge!(extra)
       end
     end
   end
