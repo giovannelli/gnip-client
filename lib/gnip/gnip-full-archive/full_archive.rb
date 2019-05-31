@@ -73,6 +73,7 @@ module Gnip
         search_options[:next]     = options[:next_cursor] if options[:next_cursor]
 
         url = [counts_url, search_options.to_query].join('?')
+        call_done = 0
 
         begin
           gnip_call = self.class.get(url, basic_auth: @auth)
@@ -85,13 +86,14 @@ module Gnip
           if parsed_response[:error].present?
             response = { results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1 }
           else
+            call_done = 1 # we have received a valid response
             parsed_response[:results].each_with_index do |item, i|
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
             end
             response = { results: (response[:results] || []) + parsed_response[:results], next: parsed_response[:next], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1 }
           end
         rescue StandardError => e
-          response = { results: [], next: nil, error: e.message, code: 500, calls: (response[:calls] || 0)  }
+          response = { results: [], next: nil, error: e.message, code: 500, calls: (response[:calls] || 0) + call_done }
         end
         # If the next cursor is not present we fetched all the data
         # It happens that twitter returns the same cursor, in that case we stop
