@@ -9,3 +9,7 @@
 /tmp/
 .idea/
 TAGS
+.editorconfig
+.rubocop.yml
+.prettierrc.js
+.eslintrc.js
