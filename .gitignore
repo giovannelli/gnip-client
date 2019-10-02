@@ -13,3 +13,4 @@ TAGS
 .rubocop.yml
 .prettierrc.js
 .eslintrc.js
+*.gem
