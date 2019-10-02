@@ -6,7 +6,7 @@ module Gnip
                   :username, :password,
                   :backfill_client, :replay_label
 
-    attr_reader :rules, :replay_rules, :full_archive, :stream, :replay, :power_track_version
+    attr_reader :rules, :replay_rules, :full_archive, :thirty_day, :stream, :replay, :power_track_version
 
     def initialize(options = {})
       @account             = options[:account]
@@ -20,6 +20,7 @@ module Gnip
       @rules               = Gnip::GnipRules::Rules.new(self)
       @replay_rules        = Gnip::GnipRules::Rules.new(self, true)
       @full_archive        = Gnip::GnipFullArchive::FullArchive.new(self)
+      @thirty_day          = Gnip::GnipFullArchive::ThirtyDay.new(self)
       @stream              = Gnip::GnipStream::Stream.new(self)
       @replay              = Gnip::GnipStream::Replay.new(self)
     end

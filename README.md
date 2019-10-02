@@ -48,12 +48,21 @@ client.replay_rules.list
 client.replay_rules.delete_all!
 
 ```
+
 **Full Archive search**
 
 ```ruby
-client.full_archive.search(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
-client.full_archive.total_by_time_period(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
-client.full_archive.total(query: "hello", date_from: Time.now - 2.months, date_to: Time.now - 20.hours)
+client.full_archive.search(query: "hello", date_from: 2.months.ago, date_to: 20.hours.ago)
+client.full_archive.total_by_time_period(query: "hello", date_from: 2.months.ago, date_to: 20.hours.ago)
+client.full_archive.total(query: "hello", date_from: 2.months.ago, date_to: 20.hours.ago)
+```
+
+**30day search**
+
+```ruby
+client.thirty_day.search(query: "hello", date_from: 30.days.ago, date_to: 1.hour.ago)
+client.thirty_day.total_by_time_period(query: "hello", date_from: 30.days.ago, date_to: 1.hour.ago)
+client.thirty_day.total(query: "hello", date_from: 30.days.ago, date_to: 1.hour.ago)
 ```
 
 **Stream**

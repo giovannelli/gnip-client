@@ -3,7 +3,8 @@
 module Gnip
   module GnipFullArchive
     class FullArchive
-      class InvalidRequestException < StandardError; end
+      class InvalidRequestException < StandardError;
+      end
 
       include HTTParty
 
@@ -14,7 +15,7 @@ module Gnip
       def initialize(client)
         @search_url = "https://data-api.twitter.com/search/fullarchive/accounts/#{client.account}/#{client.label}.json"
         @counts_url = "https://data-api.twitter.com/search/fullarchive/accounts/#{client.account}/#{client.label}/counts.json"
-        @auth = { username: client.username, password: client.password }
+        @auth = {username: client.username, password: client.password}
       end
 
       # Search using the full-archive search endpoint return an hash containing up to 500 results and the cursor to the next page
@@ -26,9 +27,9 @@ module Gnip
       def search(options = {})
         search_options = {}
         search_options[:query] = options[:query] || ''
-        search_options[:maxResults]  = options[:per_page] || 500
-        search_options[:fromDate]    = Gnip.format_date(options[:date_from]) if options[:date_from]
-        search_options[:toDate]      = Gnip.format_date(options[:date_to]) if options[:date_to]
+        search_options[:maxResults] = options[:per_page] || 500
+        search_options[:fromDate] = Gnip.format_date(options[:date_from]) if options[:date_from]
+        search_options[:toDate] = Gnip.format_date(options[:date_to]) if options[:date_to]
         search_options[:next] = options[:next_cursor] if options[:next_cursor]
         url = [search_url, search_options.to_query].join('?')
         begin
@@ -39,23 +40,23 @@ module Gnip
           raise response.message unless parsed_response.present?
 
           if parsed_response[:error].present?
-            response = { results: [],
-                         next: nil,
-                         url: url,
-                         error: parsed_response[:error][:message],
-                         code: response.code.to_i }
+            response = {results: [],
+                        next: nil,
+                        url: url,
+                        error: parsed_response[:error][:message],
+                        code: response.code.to_i}
           else
-            response = { results: parsed_response[:results],
-                         url: url,
-                         next: parsed_response[:next],
-                         code: response.code.to_i }
+            response = {results: parsed_response[:results],
+                        url: url,
+                        next: parsed_response[:next],
+                        code: response.code.to_i}
           end
         rescue StandardError => e
-          response = { results: [],
-                       url: url,
-                       next: nil,
-                       error: e.message,
-                       code: 500 }
+          response = {results: [],
+                      url: url,
+                      next: nil,
+                      error: e.message,
+                      code: 500}
         end
         response
       end
@@ -66,11 +67,11 @@ module Gnip
       def total_by_time_period(options = {})
         response = options[:response] || {}
         search_options = {}
-        search_options[:query]    = options[:query] || ''
-        search_options[:bucket]   = options[:bucket] || 'day'
+        search_options[:query] = options[:query] || ''
+        search_options[:bucket] = options[:bucket] || 'day'
         search_options[:fromDate] = Gnip.format_date(options[:date_from]) if options[:date_from]
-        search_options[:toDate]   = Gnip.format_date(options[:date_to]) if options[:date_to]
-        search_options[:next]     = options[:next_cursor] if options[:next_cursor]
+        search_options[:toDate] = Gnip.format_date(options[:date_to]) if options[:date_to]
+        search_options[:next] = options[:next_cursor] if options[:next_cursor]
 
         url = [counts_url, search_options.to_query].join('?')
         call_done = 0
@@ -84,16 +85,16 @@ module Gnip
           raise gnip_call.response.message unless parsed_response.present?
 
           if parsed_response[:error].present?
-            response = { results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1 }
+            response = {results: [], next: nil, error: parsed_response[:error][:message], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1}
           else
             call_done = 1 # we have received a valid response
             parsed_response[:results].each_with_index do |item, i|
               parsed_response[:results][i] = item.merge(timePeriod: DateTime.parse(item[:timePeriod]).to_s)
             end
-            response = { results: (response[:results] || []) + parsed_response[:results], next: parsed_response[:next], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1 }
+            response = {results: (response[:results] || []) + parsed_response[:results], next: parsed_response[:next], code: gnip_call.response.code.to_i, calls: (response[:calls] || 0) + 1}
           end
         rescue StandardError => e
-          response = { results: [], next: nil, error: e.message, code: 500, calls: (response[:calls] || 0) + call_done }
+          response = {results: [], next: nil, error: e.message, code: 500, calls: (response[:calls] || 0) + call_done}
         end
         # If the next cursor is not present we fetched all the data
         # It happens that twitter returns the same cursor, in that case we stop
@@ -111,8 +112,8 @@ module Gnip
       def total(options = {})
         extra = {}
         response = total_by_time_period(options)
-        extra = { error: response[:error] } if response[:error].present?
-        { query: options[:query], total: response[:results].map { |item| item[:count] }.reduce(:+), calls: response[:calls] }.merge!(extra)
+        extra = {error: response[:error]} if response[:error].present?
+        {query: options[:query], total: response[:results].map {|item| item[:count]}.reduce(:+), calls: response[:calls]}.merge!(extra)
       end
     end
   end
