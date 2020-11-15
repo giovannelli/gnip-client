@@ -11,15 +11,13 @@ require 'gnip/gnip-stream/stream'
 require 'gnip/gnip-stream/replay'
 
 begin
-  require "pry"
+  require 'pry'
 rescue LoadError => e
-  
+
 end
 
 module Gnip
-  
   def self.format_date(datetime)
     datetime.to_datetime.utc.strftime('%Y%m%d%H%M')
   end
-  
 end

@@ -94,7 +94,7 @@ module Gnip
           if !(rules_list[:rules] || []).size.zero?
             delete_all!
           else
-            return { status: :success, code: 200, rules: [] }
+            { status: :success, code: 200, rules: [] }
           end
         rescue Exception => e
           retry_times += 1
@@ -108,10 +108,10 @@ module Gnip
 
       private
 
-      def safe_parsed_response(parsed_response)
-        ret = parsed_response.present? ? (parsed_response.is_a?(String) ? JSON.parse(parsed_response).with_indifferent_access : parsed_response) : nil
-        ret
-      end
+        def safe_parsed_response(parsed_response)
+          ret = parsed_response.present? ? (parsed_response.is_a?(String) ? JSON.parse(parsed_response).with_indifferent_access : parsed_response) : nil
+          ret
+        end
     end
   end
 end
